@@ -42,18 +42,18 @@ function* authenticationFlow(username, password) {
 }
 
 function* loginFlow () {
-		while(true){
-			//From login request we expect to get two action values: username, password
-			const {user: {username, password} } = yield take(LOGIN_REQUEST); 
-			//We are running authentication flow which is ajax request/response function
-			const loginTask = yield fork(authenticationFlow, username, password);
-			//Wait for logout or login error action type 
-			const action = yield take([LOGOUT, LOGIN_ERROR]);
-			if(action.type === LOGOUT) 
-				yield cancel(loginTask);
-			//Clear token from localStorage
-			yield call(clearToken);
-		}
+	while(true){
+		//From login request we expect to get two action values: username, password
+		const {user: {username, password} } = yield take(LOGIN_REQUEST); 
+		//We are running authentication flow which is ajax request/response function
+		const loginTask = yield fork(authenticationFlow, username, password);
+		//Wait for logout or login error action type 
+		const action = yield take([LOGOUT, LOGIN_ERROR]);
+		if(action.type === LOGOUT) 
+			yield cancel(loginTask);
+		//Clear token from localStorage
+		yield call(clearToken);
+	}
 }
 
 export default loginFlow; 
